@@ -8,8 +8,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: {
+          DEFAULT: '#2F855A',
+          dark: '#38A169',
+        },
+        secondary: {
+          DEFAULT: '#DD6B20',
+          dark: '#ED8936',
+        },
+        accent: {
+          DEFAULT: '#3182CE',
+          dark: '#4299E1',
+        },
+        muted: {
+          DEFAULT: '#718096',
+          dark: '#A0AEC0',
+        },
       },
     },
   },
