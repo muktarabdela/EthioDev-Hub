@@ -22,8 +22,8 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen flex-col items-center justify-center p-24">
-            <div className="card w-full max-w-md">
+        <div className="flex min-h-screen flex-col items-center justify-center p-24 ">
+            <div className="card w-full max-w-md bg-accent">
                 <h1 className="text-2xl font-bold mb-6">Login to EthioDev Hub</h1>
                 <form action={handleLogin} className="space-y-4">
                     <div>
