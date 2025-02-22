@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --foreground: #1a1a1a;
+  --foreground: #f2f2f2;
   --background: #ffffff;
   --primary: #2F855A;
   /* Ethiopian green */
@@ -16,7 +16,7 @@
 
 .dark {
   --foreground: #ffffff;
-  --background: #1a1a1a;
+  --background: #f2f2f2;
   --primary: #38A169;
   --secondary: #ED8936;
   --accent: #4299E1;
