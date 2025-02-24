@@ -58,7 +58,6 @@ export default async function Home() {
   return (
     <div className={`${!session ? "mt-10" : "mt-0"} min-h-screen max-w-6xl mx-auto bg-gradient-to-b bg-background`}>
       <NavBarDemo />
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {!session && (
           <div>
