@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Terminal, Rocket } from 'lucide-react';
 
 const dummyProjects = [
+
   {
     name: "NYX",
     description: "Your AI-powered performance marketing co-pilot.",
@@ -15,7 +16,8 @@ const dummyProjects = [
     comments: 27,
     upvotes: 376,
     iconBg: "bg-indigo-600",
-    iconText: "NYX"
+    iconText: "NYX",
+    contributors: 2
   },
   {
     name: "Trupeer Faces",
@@ -23,7 +25,8 @@ const dummyProjects = [
     tags: ["Chrome Extensions", "AI", "Video"],
     comments: 13,
     upvotes: 295,
-    iconImage: "https://placehold.co/32x32"
+    iconImage: "https://placehold.co/32x32",
+    contributors: 5
   },
   {
     name: "Perplexity Deep Research",
@@ -32,7 +35,8 @@ const dummyProjects = [
     comments: 9,
     upvotes: 291,
     iconBg: "bg-black",
-    iconSymbol: "data_object"
+    iconSymbol: "data_object",
+    contributors: 1
   }
 ];
 
@@ -52,26 +56,30 @@ export default async function Home() {
     .order('created_at', { ascending: false });
 
   return (
-    <div className="min-h-screen max-w-6xl mx-auto bg-gradient-to-b f">
+    <div className={`${!session ? "mt-10" : "mt-0"} min-h-screen max-w-6xl mx-auto bg-gradient-to-b bg-background`}>
       <NavBarDemo />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Hero />
+        {!session && (
+          <div>
+            <Hero />
+          </div>
+        )}
 
         {/* Featured Projects Section */}
         <section className="py-8 md:py-16">
           <div className="flex flex-col md:flex-row justify-between items-center mb-8 md:mb-12 gap-4">
             <div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-gray-200">
                 Latest Innovations
               </h2>
-              <p className="mt-2 text-base md:text-lg text-muted-foreground">
+              <p className="mt-2 text-base md:text-lg text-muted-foreground text-gray-300">
                 Explore cutting-edge projects from our developer community
               </p>
 
-            <p className="mt-10 text-base md:text-lg text-muted-foreground">
-              <h3 className="text-2xl font-bold">Today's Top Projects</h3>
-            </p>
+              <p className="mt-10 text-base md:text-lg text-muted-foreground">
+                <h3 className="text-2xl font-bold text-gray-100">Today's Top Projects</h3>
+              </p>
             </div>
             <Button asChild className="gap-2 group" size="md lg:size-lg">
               <Link href="/projects/new">
