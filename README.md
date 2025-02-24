@@ -1,6 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# EthioDevHub
 
-## Getting Started
+A community-driven platform for Ethiopian developers to showcase projects, track progress, and connect with opportunities. Built for and with the Code Night Telegram community (@CodeNight).
+
+## Project Overview
+
+Develop a web platform similar to Product Hunt, specifically tailored for the Ethiopian developer community. This platform will enable developers to:
+
+- Showcase projects with detailed descriptions, images, and links
+- Track project progress and milestones
+- Receive community feedback and motivation
+- Connect with hiring opportunities
+
+## Key Features
+
+### 🚀 Project Showcase
+
+- Submit and display projects with rich media
+- Detailed project descriptions and documentation
+- Version tracking and update history
+
+### 📈 Progress Tracking
+
+- Milestone tracking and achievement badges
+- Visual timeline of project development
+- Progress analytics and metrics
+
+### 💬 Community Engagement
+
+- Upvoting and ranking system
+- Comment threads and discussions
+- Collaborative feedback system
+
+### 👥 Hiring Integration
+
+- Developer portfolio section
+- Project-based skill showcasing
+- Recruiter-focused discovery tools
+
+## Technology Stack
+
+**Frontend:**
+
+- Next.js (App Router) for SEO-friendly interface
+- Tailwind CSS for modern styling
+
+**Backend:**
+
+- Node.js API routes
+- Supabase for real-time data and authentication
+- PostgreSQL database
+
+**Tooling:**
+
+- Vercel for deployment
+- GitHub Actions for CI/CD
+- Figma for collaborative design
+
+## Development Philosophy
+
+🌍 **Community-Driven**  
+Open source development with community contribution guidelines
+
+🎯 **User-Centric Design**  
+Regular user testing with Code Night community members
+
+🧩 **Modular Architecture**  
+Component-based structure for easy feature expansion
+
+<!-- ## Getting Started
 
 First, run the development server:
 
@@ -33,4 +100,4 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details. -->
