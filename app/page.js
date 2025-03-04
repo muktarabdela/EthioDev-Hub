@@ -45,9 +45,9 @@ export default async function Home() {
   const { data: { session } } = await supabase.auth.getSession();
 
   // Redirect to login if not authenticated
-  // if (!session) {
-  //   redirect('/login');
-  // }
+  if (!session) {
+    redirect('/login');
+  }
 
   // Fetch projects (you'll need to implement this in your database)
   const { data: projects } = await supabase
