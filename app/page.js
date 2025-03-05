@@ -76,9 +76,9 @@ export default async function Home() {
                 Explore cutting-edge projects from our developer community
               </p>
 
-              <p className="mt-10 text-base md:text-lg text-muted-foreground">
+              <div className="mt-10 text-base md:text-lg text-muted-foreground">
                 <h3 className="text-2xl font-bold text-gray-100">Today's Top Projects</h3>
-              </p>
+              </div>
             </div>
             <Button asChild className="gap-2 group" size="md lg:size-lg">
               <Link href="/projects/new">
