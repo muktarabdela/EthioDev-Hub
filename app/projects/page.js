@@ -1,34 +1,43 @@
-import { createClient } from '@/lib/auth';
+import { supabase } from '@/lib/supabase';
 import { ProjectCard } from '@/components/ProjectCard';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Search } from 'lucide-react';
 
 async function getProjects(searchParams) {
-  const supabase = createClient();
+  try {
+    let query = supabase
+      .from('projects')
+      .select(`
+        *,
+        developer:profiles(id, name, role)
+      `);
 
-  let query = supabase
-    .from('projects')
-    .select(`
-      *,
-      developer:profiles(id, name, role)
-    `);
+    // Apply sorting
+    const sort = searchParams?.sort || 'latest';
+    switch (sort) {
+      case 'popular':
+        query = query.order('upvotes_count', { ascending: false });
+        break;
+      case 'discussed':
+        query = query.order('comments_count', { ascending: false });
+        break;
+      default:
+        query = query.order('created_at', { ascending: false });
+    }
 
-  // Apply sorting
-  const sort = searchParams?.sort || 'latest';
-  switch (sort) {
-    case 'popular':
-      query = query.order('upvotes_count', { ascending: false });
-      break;
-    case 'discussed':
-      query = query.order('comments_count', { ascending: false });
-      break;
-    default:
-      query = query.order('created_at', { ascending: false });
+    const { data: projects, error } = await query;
+
+    if (error) {
+      console.error('Error fetching projects:', error);
+      return [];
+    }
+
+    return projects || [];
+  } catch (error) {
+    console.error('Error:', error);
+    return [];
   }
-
-  const { data: projects } = await query;
-  return projects || [];
 }
 
 export default async function ProjectsPage({ searchParams }) {
