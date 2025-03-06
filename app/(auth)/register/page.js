@@ -1,8 +1,52 @@
+'use client';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
+    const router = useRouter();
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+
+        const formData = new FormData(e.target);
+        const data = {
+            email: formData.get('email'),
+            password: formData.get('password'),
+            name: formData.get('name'),
+            role: formData.get('role'),
+        };
+
+        try {
+            const response = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to register');
+            }
+
+            // Registration successful
+            router.push('/login?registered=true');
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center px-4">
             <Card className="w-full max-w-md">
@@ -10,7 +54,12 @@ export default function RegisterPage() {
                     <CardTitle className="text-2xl">Create an Account</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form action="/api/auth/register" method="POST" className="space-y-4">
+                    {error && (
+                        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md text-sm text-destructive">
+                            {error}
+                        </div>
+                    )}
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label
                                 htmlFor="name"
@@ -79,8 +128,12 @@ export default function RegisterPage() {
                                 <option value="user">Other</option>
                             </select>
                         </div>
-                        <Button type="submit" className="w-full">
-                            Create Account
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={loading}
+                        >
+                            {loading ? 'Creating Account...' : 'Create Account'}
                         </Button>
                     </form>
 

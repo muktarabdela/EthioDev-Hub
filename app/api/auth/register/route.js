@@ -4,7 +4,23 @@ import { createClient } from '@/lib/auth';
 // POST /api/auth/register - Register a new user
 export async function POST(request) {
     try {
+        // Ensure the content type is application/json
+        if (request.headers.get('content-type') !== 'application/json') {
+            return NextResponse.json(
+                { error: 'Content type must be application/json' },
+                { status: 400 }
+            );
+        }
+
         const { email, password, name, role } = await request.json();
+
+        // Validate required fields
+        if (!email || !password || !name || !role) {
+            return NextResponse.json(
+                { error: 'Missing required fields' },
+                { status: 400 }
+            );
+        }
 
         if (!['developer', 'user', 'hr'].includes(role)) {
             return NextResponse.json(
