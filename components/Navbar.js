@@ -1,22 +1,33 @@
 'use client'
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { createClientSideClient } from '@/lib/auth-client';
+import { createClient } from '@/lib/supabase';
+import { useState, useEffect } from 'react';
 
-export async function Navbar() {
-    const supabase = createClientSideClient();
+export function Navbar() {
     const pathname = usePathname();
+    const [session, setSession] = useState(null);
+    const [profile, setProfile] = useState(null);
 
-    const {
-        data: { session },
-    } = await supabase.auth.getSession();
+    useEffect(() => {
+        async function getSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            setSession(session);
 
-    const { data: profile } = session ? await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', session.user.id)
-        .single() : { data: null };
+            if (session) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', session.user.id)
+                    .single();
+                setProfile(profile);
+            }
+        }
+
+        getSession();
+    }, []);
 
     return (
         <nav className="border-b">

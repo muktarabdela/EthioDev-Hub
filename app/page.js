@@ -1,53 +1,16 @@
-import { createClient } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+import { supabase, getSession } from '@/lib/supabase';
 import { ProjectCard } from '@/components/ProjectCard';
 import Link from 'next/link';
-import { NavBarDemo } from '@/components/Navbar';
-import { Hero } from '@/components/ui/animated-hero';
+import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/Button';
-import { Terminal, Rocket } from 'lucide-react';
-
-const dummyProjects = [
-
-  {
-    name: "NYX",
-    description: "Your AI-powered performance marketing co-pilot.",
-    tags: ["Marketing", "Advertising", "AI"],
-    comments: 27,
-    upvotes: 376,
-    iconBg: "bg-indigo-600",
-    iconText: "NYX",
-    contributors: 2
-  },
-  {
-    name: "Trupeer Faces",
-    description: "Studio-quality screen recording with avatars, completely AI",
-    tags: ["Chrome Extensions", "AI", "Video"],
-    comments: 13,
-    upvotes: 295,
-    iconImage: "https://placehold.co/32x32",
-    contributors: 5
-  },
-  {
-    name: "Perplexity Deep Research",
-    description: "Save hours of time in-depth research and analysis",
-    tags: ["AI", "Bots", "Search"],
-    comments: 9,
-    upvotes: 291,
-    iconBg: "bg-black",
-    iconSymbol: "data_object",
-    contributors: 1
-  }
-];
 
 async function getProjects() {
   try {
-    const supabase = await createClient();
     const { data: projects, error } = await supabase
       .from('projects')
       .select(`
         *,
-        developer:profiles(id, name, role)
+        developer:profiles!projects_developer_id_fkey(id, name, role)
       `)
       .order('upvotes_count', { ascending: false })
       .limit(6);
@@ -65,34 +28,20 @@ async function getProjects() {
 }
 
 export default async function Home() {
-  const supabase = await createClient();
   let session = null;
 
   try {
-    const { data } = await supabase.auth.getSession();
-    session = data.session;
+    session = await getSession();
   } catch (error) {
     console.error('Error fetching session:', error);
   }
 
-  // Redirect to login if not authenticated
-  // if (!session) {
-  //   redirect('/login');
-  // }
-
-  // Fetch projects (you'll need to implement this in your database)
   const projects = await getProjects();
 
   return (
-    <div className={`${!session ? "mt-10" : "mt-0"} min-h-screen max-w-6xl mx-auto bg-gradient-to-b bg-background`}>
-      <NavBarDemo />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {!session && (
-          <div>
-            <Hero />
-          </div>
-        )}
-
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <main className="container mx-auto px-4 py-8">
         {/* Hero Section */}
         <section className="py-20 text-center bg-gradient-to-b from-primary/5 to-transparent">
           <div className="container mx-auto px-4">
