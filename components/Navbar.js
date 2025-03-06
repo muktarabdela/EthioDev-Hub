@@ -2,10 +2,10 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { createClient } from '@/lib/auth';
+import { createClientSideClient } from '@/lib/auth-client';
 
 export async function Navbar() {
-    const supabase = createClient();
+    const supabase = createClientSideClient();
     const pathname = usePathname();
 
     const {
