@@ -1,91 +1,107 @@
-import Link from "next/link";
+import { createClient } from '@/lib/auth';
+import { ProjectCard } from '@/components/ProjectCard';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Search } from 'lucide-react';
 
-const dummyProjects = [
-    {
-        id: 1,
-        name: "NYX",
-        description: "Your AI-powered performance marketing co-pilot.",
-        tags: ["Marketing", "Advertising", "Artificial Intelligence"],
-        stats: { comments: 27, upvotes: 376 },
-        icon: { bg: "bg-indigo-600", text: "NYX" }
-    },
-    {
-        id: 2,
-        name: "Trupeer Faces",
-        description: "Studio-quality screen recording with avatars, completely AI",
-        tags: ["Chrome Extensions", "Artificial Intelligence", "Video"],
-        stats: { comments: 13, upvotes: 295 },
-        icon: { image: "https://placehold.co/32x32" }
-    },
-    {
-        id: 3,
-        name: "Perplexity Deep Research",
-        description: "Save hours of time in-depth research and analysis",
-        tags: ["Artificial Intelligence", "Bots", "Search"],
-        stats: { comments: 9, upvotes: 291 },
-        icon: { bg: "bg-black", icon: "data_object" }
-    },
-    {
-        id: 4,
-        name: "ElevenLabs Studio",
-        description: "Structure, edit, and generate long-form audio with precision",
-        tags: ["Marketing", "Artificial Intelligence", "Audio"],
-        stats: { comments: 5, upvotes: 235 },
-        icon: { bg: "bg-gray-900", icon: "pause" }
-    }
-];
+async function getProjects(searchParams) {
+  const supabase = createClient();
 
-export default function ProjectsPage() {
-    return (
-        <div className="min-h-screen bg-gray-50 p-8">
-            <div className="max-w-4xl mx-auto">
-                <div className="bg-white rounded-xl p-6 shadow-lg">
-                    <h1 className="text-2xl font-bold mb-6">Top Products Launching Today</h1>
+  let query = supabase
+    .from('projects')
+    .select(`
+      *,
+      developer:profiles(id, name, role)
+    `);
 
-                    <div className="space-y-6">
-                        {dummyProjects.map((project, index) => (
-                            <div key={project.id} className="flex items-center justify-between group hover:bg-gray-50 p-4 rounded-lg transition-colors">
-                                <div className="flex gap-4 items-start">
-                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${project.icon.bg || 'bg-gray-100'}`}>
-                                        {project.icon.text ? (
-                                            <span className="text-white font-bold">{project.icon.text}</span>
-                                        ) : project.icon.image ? (
-                                            <img src={project.icon.image} alt={project.name} className="w-full h-full object-cover rounded-lg" />
-                                        ) : (
-                                            <span className="material-symbols-outlined text-white">{project.icon.icon}</span>
-                                        )}
-                                    </div>
+  // Apply sorting
+  const sort = searchParams?.sort || 'latest';
+  switch (sort) {
+    case 'popular':
+      query = query.order('upvotes_count', { ascending: false });
+      break;
+    case 'discussed':
+      query = query.order('comments_count', { ascending: false });
+      break;
+    default:
+      query = query.order('created_at', { ascending: false });
+  }
 
-                                    <div className="flex-1">
-                                        <h2 className="text-lg font-semibold group-hover:text-indigo-600 transition-colors">
-                                            {index + 1}. {project.name}
-                                        </h2>
-                                        <p className="text-gray-600 text-sm mb-2">{project.description}</p>
-                                        <div className="flex gap-2 flex-wrap">
-                                            {project.tags.map((tag) => (
-                                                <span key={tag} className="px-3 py-1 bg-gray-100 rounded-full text-xs hover:bg-gray-200 transition-colors">
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
+  const { data: projects } = await query;
+  return projects || [];
+}
 
-                                <div className="flex items-center gap-6 text-gray-500">
-                                    <div className="flex items-center gap-1">
-                                        <span className="material-symbols-outlined">comment</span>
-                                        <span>{project.stats.comments}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                        <span className="material-symbols-outlined">trending_up</span>
-                                        <span>{project.stats.upvotes}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
+export default async function ProjectsPage({ searchParams }) {
+  const projects = await getProjects(searchParams);
+
+  return (
+    <main className="container mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold mb-4">Explore Projects</h1>
+          <p className="text-muted-foreground">
+            Discover amazing projects from Ethiopian developers
+          </p>
         </div>
-    );
+
+        {/* Search and Filters */}
+        <div className="mb-8">
+          <Card>
+            <CardContent className="py-4">
+              <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                    <input
+                      type="text"
+                      placeholder="Search projects..."
+                      className="w-full pl-10 pr-4 py-2 border rounded-md"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant={searchParams?.sort === 'latest' ? 'default' : 'outline'}
+                    asChild
+                  >
+                    <a href="/projects?sort=latest">Latest</a>
+                  </Button>
+                  <Button
+                    variant={searchParams?.sort === 'popular' ? 'default' : 'outline'}
+                    asChild
+                  >
+                    <a href="/projects?sort=popular">Popular</a>
+                  </Button>
+                  <Button
+                    variant={searchParams?.sort === 'discussed' ? 'default' : 'outline'}
+                    asChild
+                  >
+                    <a href="/projects?sort=discussed">Most Discussed</a>
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Projects Grid */}
+        {projects.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
+        ) : (
+          <Card>
+            <CardContent className="text-center py-12">
+              <p className="text-muted-foreground">
+                No projects found. Try adjusting your search or filters.
+              </p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </main>
+  );
 }

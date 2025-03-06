@@ -40,6 +40,21 @@ const dummyProjects = [
   }
 ];
 
+async function getProjects() {
+  const supabase = createClient();
+
+  const { data: projects } = await supabase
+    .from('projects')
+    .select(`
+      *,
+      developer:profiles(id, name, role)
+    `)
+    .order('upvotes_count', { ascending: false })
+    .limit(6);
+
+  return projects || [];
+}
+
 export default async function Home() {
   const supabase = createClient();
   const { data: { session } } = await supabase.auth.getSession();
@@ -50,10 +65,7 @@ export default async function Home() {
   // }
 
   // Fetch projects (you'll need to implement this in your database)
-  const { data: projects } = await supabase
-    .from('projects')
-    .select('*')
-    .order('created_at', { ascending: false });
+  const projects = await getProjects();
 
   return (
     <div className={`${!session ? "mt-10" : "mt-0"} min-h-screen max-w-6xl mx-auto bg-gradient-to-b bg-background`}>
@@ -65,125 +77,108 @@ export default async function Home() {
           </div>
         )}
 
-        {/* Featured Projects Section */}
-        <section className="py-8 md:py-16">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-8 md:mb-12 gap-4">
-            <div>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight text-gray-200">
-                Latest Innovations
-              </h2>
-              <p className="mt-2 text-base md:text-lg text-muted-foreground text-gray-300">
-                Explore cutting-edge projects from our developer community
-              </p>
-
-              <div className="mt-10 text-base md:text-lg text-muted-foreground">
-                <h3 className="text-2xl font-bold text-gray-100">Today's Top Projects</h3>
-              </div>
-            </div>
-            <Button asChild className="gap-2 group" size="md lg:size-lg">
+        {/* Hero Section */}
+        <section className="py-20 text-center bg-gradient-to-b from-primary/5 to-transparent">
+          <div className="container mx-auto px-4">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              Showcase Your Projects.{' '}
+              <span className="text-primary">Get Hired!</span>
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Join Ethiopia's premier platform for developers to showcase their work,
+              connect with peers, and get discovered by potential employers.
+            </p>
+            <div className="flex justify-center gap-4">
               <Link href="/projects/new">
-                Launch Project
-                <Rocket className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <Button size="lg">
+                  Post Your Project
+                </Button>
               </Link>
+              <Link href="/projects">
+                <Button variant="outline" size="lg">
+                  Explore Projects
             </Button>
+              </Link>
+            </div>
           </div>
+        </section>
 
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Main Content */}
-            <div className="w-full lg:w-[70%]">
-              <div className="flex flex-col gap-6 md:gap-8">
-                {dummyProjects.map((project, index) => (
-                  <ProjectCard
-                    key={project.name}
-                    project={project}
-                    index={index}
-                  />
-                ))}
+        {/* Trending Projects Section */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="flex justify-between items-center mb-8">
+              <div>
+                <h2 className="text-3xl font-bold mb-2">
+                  Trending Projects
+                </h2>
+                <p className="text-muted-foreground">
+                  Discover the most popular projects from Ethiopian developers
+                </p>
               </div>
+              <Link href="/projects">
+                <Button variant="outline">
+                  View All Projects
+                </Button>
+              </Link>
             </div>
 
-            {/* Sidebar Content */}
-            <div className="w-full lg:w-[30%] space-y-6 md:space-y-8">
-              {/* Featured Developers Section */}
-              <div className="bg-white p-4 md:p-6 rounded-xl border">
-                <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Featured Developers</h3>
-                <div className="space-y-3 md:space-y-4">
-                  {[1, 2, 3].map((_, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-100 rounded-full"></div>
-                      <div>
-                        <p className="text-sm md:text-base font-medium">Developer Name</p>
-                        <p className="text-xs md:text-sm text-gray-500">3 projects</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {projects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </div>
+        </section>
 
-              {/* Trending Tags Section */}
-              <div className="bg-white p-4 md:p-6 rounded-xl border">
-                <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Trending Tags</h3>
-                <div className="flex flex-wrap gap-2">
-                  {['AI', 'Web3', 'Mobile', 'SaaS', 'Open Source'].map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-2 py-1 text-xs md:text-sm bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+        {/* Community Stats Section */}
+        <section className="py-16 bg-primary/5">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+              <div>
+                <h3 className="text-4xl font-bold text-primary mb-2">
+                  {projects.length}+
+                </h3>
+                <p className="text-muted-foreground">
+                  Projects Showcased
+                </p>
                 </div>
+              <div>
+                <h3 className="text-4xl font-bold text-primary mb-2">
+                  100+
+                </h3>
+                <p className="text-muted-foreground">
+                  Active Developers
+                </p>
+              </div>
+              <div>
+                <h3 className="text-4xl font-bold text-primary mb-2">
+                  50+
+                </h3>
+                <p className="text-muted-foreground">
+                  Companies Hiring
+                </p>
               </div>
             </div>
           </div>
         </section>
 
-        {/* All Projects Section */}
-        {/* <section className="py-16 border-t border-gray-100">
-          <div className="flex justify-between items-center mb-8">
-            <h3 className="text-2xl font-bold">Today's Top Projects</h3>
-            <Link
-              href="/projects"
-              className="text-primary hover:text-primary/80 flex items-center gap-2 transition-colors"
-            >
-              View All
-              <Terminal className="h-4 w-4" />
+        {/* CTA Section */}
+        <section className="py-20">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Ready to Showcase Your Work?
+            </h2>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Join our community of talented developers and get your work in front of
+              potential employers.
+            </p>
+            <Link href="/register">
+              <Button size="lg">
+                Get Started Now
+              </Button>
             </Link>
           </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {projects?.map((project, index) => (
-              <div
-                key={project.id}
-                className="bg-background p-6 rounded-xl border hover:border-primary/20 transition-all duration-200"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0 bg-primary/10 p-3 rounded-lg">
-                    <div className="h-10 w-10 flex items-center justify-center text-primary">
-                      {index + 1}
-                    </div>
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="text-lg font-semibold">{project.name}</h4>
-                    <p className="text-muted-foreground mt-2 line-clamp-2">
-                      {project.description}
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      {project.tags?.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-gray-200 transition-colors"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section> */}
+        </section>
       </main>
     </div>
   );

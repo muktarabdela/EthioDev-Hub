@@ -1,59 +1,68 @@
-import { MessageCircle, ArrowUp, Sparkles } from "lucide-react"
+import Link from 'next/link';
+import { ThumbsUp, MessageSquare, Github, Globe } from 'lucide-react';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 
-export default function ProjectCard({ project, index }) {
+export function ProjectCard({ project }) {
+    const {
+        id,
+        title,
+        description,
+        github_url,
+        live_url,
+        upvotes_count,
+        comments_count,
+        developer,
+    } = project;
+
     return (
-        <div className="group bg-[#e7e5e4] dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-300 shadow-sm hover:shadow-lg hover:shadow-primary/5">
-            <div className="flex flex-col space-y-4">
+        <Card className="flex flex-col h-full">
+            <CardHeader>
                 <div className="flex items-center justify-between">
-                    {/* Project Icon */}
-                    <div
-                        className={`w-12 h-12 rounded-xl flex items-center justify-center ${project.iconBg || "bg-primary/10 dark:bg-primary/20"}`}
-                    >
-                        {project.iconText ? (
-                            <span className="text-primary font-bold">{project.iconText}</span>
-                        ) : project.iconImage ? (
-                            <img
-                                src={project.iconImage || "/placeholder.svg"}
-                                alt={project.name}
-                                className="w-full h-full object-cover rounded-lg"
-                            />
-                        ) : (
-                            <Sparkles className="w-6 h-6 text-primary" />
+                    <CardTitle className="line-clamp-1">
+                        <Link href={`/projects/${id}`} className="hover:underline">
+                            {title}
+                        </Link>
+                    </CardTitle>
+                    <div className="flex items-center space-x-2">
+                        {github_url && (
+                            <Link href={github_url} target="_blank" rel="noopener noreferrer">
+                                <Button variant="ghost" size="icon">
+                                    <Github className="h-4 w-4" />
+                                </Button>
+                            </Link>
+                        )}
+                        {live_url && (
+                            <Link href={live_url} target="_blank" rel="noopener noreferrer">
+                                <Button variant="ghost" size="icon">
+                                    <Globe className="h-4 w-4" />
+                                </Button>
+                            </Link>
                         )}
                     </div>
-
-                    {/* Project Stats */}
-                    <div className="flex items-center gap-4 text-gray-500 dark:text-gray-400">
-                        <div className="flex items-center gap-1">
-                            <MessageCircle className="w-4 h-4" />
-                            <span className="text-sm">{project.comments}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                            <ArrowUp className="w-4 h-4" />
-                            <span className="text-sm">{project.upvotes}</span>
-                        </div>
+                </div>
+                <Link href={`/developers/${developer.id}`} className="text-sm text-muted-foreground hover:underline">
+                    by {developer.name}
+                </Link>
+            </CardHeader>
+            <CardContent>
+                <CardDescription className="line-clamp-3">
+                    {description}
+                </CardDescription>
+            </CardContent>
+            <CardFooter className="mt-auto">
+                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                    <div className="flex items-center">
+                        <ThumbsUp className="mr-1 h-4 w-4" />
+                        {upvotes_count}
+                    </div>
+                    <div className="flex items-center">
+                        <MessageSquare className="mr-1 h-4 w-4" />
+                        {comments_count}
                     </div>
                 </div>
-
-                {/* Project Details */}
-                <div className="flex-1">
-                    <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100 group-hover:text-primary transition-colors">
-                        {index + 1}. {project.name}
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mt-2 mb-3">{project.description}</p>
-                    <div className="flex gap-2 flex-wrap">
-                        {project.tags?.map((tag) => (
-                            <span
-                                key={tag}
-                                className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-full text-xs hover:bg-primary/10 dark:hover:bg-primary/20 hover:text-primary transition-colors"
-                            >
-                                {tag}
-                            </span>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
+            </CardFooter>
+        </Card>
+    );
 }
 
