@@ -41,23 +41,39 @@ const dummyProjects = [
 ];
 
 async function getProjects() {
-  const supabase = createClient();
+  try {
+    const supabase = await createClient();
+    const { data: projects, error } = await supabase
+      .from('projects')
+      .select(`
+        *,
+        developer:profiles(id, name, role)
+      `)
+      .order('upvotes_count', { ascending: false })
+      .limit(6);
 
-  const { data: projects } = await supabase
-    .from('projects')
-    .select(`
-      *,
-      developer:profiles(id, name, role)
-    `)
-    .order('upvotes_count', { ascending: false })
-    .limit(6);
+    if (error) {
+      console.error('Error fetching projects:', error);
+      return [];
+    }
 
-  return projects || [];
+    return projects || [];
+  } catch (error) {
+    console.error('Error:', error);
+    return [];
+  }
 }
 
 export default async function Home() {
-  const supabase = createClient();
-  const { data: { session } } = await supabase.auth.getSession();
+  const supabase = await createClient();
+  let session = null;
+
+  try {
+    const { data } = await supabase.auth.getSession();
+    session = data.session;
+  } catch (error) {
+    console.error('Error fetching session:', error);
+  }
 
   // Redirect to login if not authenticated
   // if (!session) {
