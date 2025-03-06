@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/auth';
-
+import { createClient } from '@/lib/supabase';
 // POST /api/auth/register - Register a new user
 export async function POST(request) {
     try {

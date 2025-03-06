@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/auth';
+import { createClient } from '@/lib/supabase';
 
 export function Navbar() {
     const pathname = usePathname();

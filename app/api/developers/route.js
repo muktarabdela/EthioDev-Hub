@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/auth';
+import { createClient } from '@/lib/supabase';
 
 // GET /api/developers - Get all developers
 export async function GET() {
   const supabase = createClient();
-  
+
   try {
     const { data: developers, error } = await supabase
       .from('profiles')

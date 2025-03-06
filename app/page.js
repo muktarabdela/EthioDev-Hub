@@ -1,4 +1,4 @@
-import { supabase, getSession } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/Button';
@@ -64,10 +64,13 @@ async function getProjects() {
 }
 
 export default async function Home() {
-  let session = null;
+  const { data: { session } } = await supabase.auth.getSession();
 
   try {
-    session = await getSession();
+    // Redirect to login if not authenticated
+    // if (!session) {
+    //   redirect('/login');
+    // }
   } catch (error) {
     console.error('Error fetching session:', error);
   }

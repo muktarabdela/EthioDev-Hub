@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/auth';
+import { createClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Github, Globe, ThumbsUp, MessageSquare, Calendar } from 'lucide-react';

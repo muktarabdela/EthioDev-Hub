@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient, requireAuth } from '@/lib/auth';
+import { createClient, requireAuth } from '@/lib/supabase';
 
 // GET /api/projects/[id] - Get a single project
 export async function GET(request, { params }) {

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient, requireAuth } from '@/lib/auth';
+import { createClient, requireAuth } from '@/lib/supabase';
 
 // POST /api/projects/[id]/upvote - Upvote a project
 export async function POST(request, { params }) {

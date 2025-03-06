@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { createClient, requireAuth, requireRole } from '@/lib/auth';
+import { createClient, requireAuth, requireRole } from '@/lib/supabase';
 
 // GET /api/projects - Get all projects
 export async function GET() {
   const supabase = createClient();
-  
+
   try {
     const { data: projects, error } = await supabase
       .from('projects')
@@ -31,7 +31,7 @@ export async function POST(request) {
   try {
     const { title, description, github_url, live_url } = await request.json();
     await requireRole(['developer']);
-    
+
     const supabase = createClient();
     const session = await requireAuth();
 

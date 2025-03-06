@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { createClient } from '@/lib/auth';
+import { createClient } from '@/lib/supabase';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Github, Globe } from 'lucide-react';
 

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { createClient, requireAuth } from '@/lib/auth';
+import { createClient, requireAuth } from '@/lib/supabase';
 
 // GET /api/profile - Get current user's profile
 export async function GET() {

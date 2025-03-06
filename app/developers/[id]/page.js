@@ -1,13 +1,13 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/auth';
+import { createClient } from '@/lib/supabase';
 import { ProjectCard } from '@/components/ProjectCard';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Github, Globe } from 'lucide-react';
 
 async function getDeveloper(id) {
   const supabase = createClient();
-  
+
   const { data: developer } = await supabase
     .from('profiles')
     .select(`
