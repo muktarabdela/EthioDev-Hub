@@ -1,10 +1,10 @@
-import { createClient } from '@/lib/supabase';
+import { createClient } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import ProjectCard from '@/components/ProjectCard';
+import { ProjectCard } from '@/components/ProjectCard';
 import Link from 'next/link';
 import { NavBarDemo } from '@/components/Navbar';
 import { Hero } from '@/components/ui/animated-hero';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Terminal, Rocket } from 'lucide-react';
 
 const dummyProjects = [
@@ -97,7 +97,7 @@ export default async function Home() {
               <Link href="/projects">
                 <Button variant="outline" size="lg">
                   Explore Projects
-            </Button>
+                </Button>
               </Link>
             </div>
           </div>
@@ -126,8 +126,8 @@ export default async function Home() {
               {projects.map((project) => (
                 <ProjectCard key={project.id} project={project} />
               ))}
-                      </div>
-                    </div>
+            </div>
+          </div>
         </section>
 
         {/* Community Stats Section */}
@@ -141,7 +141,7 @@ export default async function Home() {
                 <p className="text-muted-foreground">
                   Projects Showcased
                 </p>
-                </div>
+              </div>
               <div>
                 <h3 className="text-4xl font-bold text-primary mb-2">
                   100+
