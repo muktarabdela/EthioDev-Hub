@@ -1,8 +1,50 @@
+'use client';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
+    const router = useRouter();
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    async function handleSubmit(e) {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
+
+        const formData = new FormData(e.target);
+        const data = {
+            email: formData.get('email'),
+            password: formData.get('password'),
+        };
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.error || 'Failed to login');
+            }
+
+            // Login successful
+            router.push('/');
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center px-4">
             <Card className="w-full max-w-md">
@@ -10,7 +52,12 @@ export default function LoginPage() {
                     <CardTitle className="text-2xl">Welcome Back</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form action="/api/auth/login" method="POST" className="space-y-4">
+                    {error && (
+                        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md text-sm text-destructive">
+                            {error}
+                        </div>
+                    )}
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label
                                 htmlFor="email"
@@ -43,8 +90,12 @@ export default function LoginPage() {
                                 placeholder="••••••••"
                             />
                         </div>
-                        <Button type="submit" className="w-full">
-                            Sign In
+                        <Button 
+                            type="submit" 
+                            className="w-full"
+                            disabled={loading}
+                        >
+                            {loading ? 'Signing in...' : 'Sign In'}
                         </Button>
                     </form>
 

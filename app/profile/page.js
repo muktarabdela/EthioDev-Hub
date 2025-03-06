@@ -1,40 +1,77 @@
-import { redirect } from 'next/navigation';
+'use client'
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ProjectCard } from '@/components/ProjectCard';
 
-async function getProfile() {
+export default function ProfilePage() {
+    const router = useRouter();
     const supabase = createClient();
+    const [profile, setProfile] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const {
-        data: { session },
-    } = await supabase.auth.getSession();
+    useEffect(() => {
+        // Get initial session
+        getProfile();
 
-    if (!session) {
-        redirect('/login');
+        // Set up session listener
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log("Auth state changed:", _event, session);
+            if (session) {
+                getProfile();
+            } else {
+                router.push('/login');
+            }
+        });
+
+        // Cleanup subscription
+        return () => subscription.unsubscribe();
+    }, []);
+
+    async function getProfile() {
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        console.log("Session data:", session);
+        console.log("Session error:", sessionError);
+
+        if (!session) {
+            console.log("No session found, redirecting to login");
+            router.push('/login');
+            return;
+        }
+
+        const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select(`
+                *,
+                projects(
+                    *,
+                    developer:profiles(id, name, role)
+                )
+            `)
+            .eq('id', session.user.id)
+            .single();
+
+        console.log("Profile data:", profile);
+        console.log("Profile error:", profileError);
+
+        setProfile(profile);
+        setLoading(false);
     }
 
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select(`
-      *,
-      projects(
-        *,
-        developer:profiles(id, name, role)
-      )
-    `)
-        .eq('id', session.user.id)
-        .single();
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
-    return profile;
-}
+    if (!profile) {
+        return null;
+    }
 
-export default async function ProfilePage() {
-    const profile = await getProfile();
     const { projects } = profile;
-
-    // Calculate total upvotes and comments
     const totalUpvotes = projects?.reduce((sum, project) => sum + project.upvotes_count, 0) || 0;
     const totalComments = projects?.reduce((sum, project) => sum + project.comments_count, 0) || 0;
 
@@ -43,7 +80,7 @@ export default async function ProfilePage() {
             <div className="max-w-4xl mx-auto">
                 {/* Profile Header */}
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold mb-4">My Profile</h1>
+                    <h1 className="text-4xl font-bold mb-4 ">My Profile</h1>
                     <div className="flex justify-between items-center">
                         <div>
                             <p className="text-xl text-muted-foreground">

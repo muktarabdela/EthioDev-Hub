@@ -1,34 +1,66 @@
-import { redirect } from 'next/navigation';
+'use client'
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 
-async function checkAccess() {
+export default function NewProjectPage() {
+    const router = useRouter();
     const supabase = createClient();
+    const [loading, setLoading] = useState(true);
 
-    const {
-        data: { session },
-    } = await supabase.auth.getSession();
+    useEffect(() => {
+        async function checkAccess() {
+            const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+            console.log("Session data:", session);
+            console.log("Session error:", sessionError);
 
-    if (!session) {
-        redirect('/login');
+            if (!session) {
+                console.log("No session found, redirecting to login");
+                router.push('/login');
+                return;
+            }
+
+            const { data: profile, error: profileError } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', session.user.id)
+                .single();
+
+            console.log("Profile data:", profile);
+            console.log("Profile error:", profileError);
+
+            if (!profile || profile.role !== 'developer') {
+                router.push('/');
+                return;
+            }
+
+            setLoading(false);
+        }
+
+        checkAccess();
+
+        // Set up session listener
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            console.log("Auth state changed:", _event, session);
+            if (session) {
+                checkAccess();
+            } else {
+                router.push('/login');
+            }
+        });
+
+        // Cleanup subscription
+        return () => subscription.unsubscribe();
+    }, []);
+
+    if (loading) {
+        return <div>Loading...</div>;
     }
-
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', session.user.id)
-        .single();
-
-    if (!profile || profile.role !== 'developer') {
-        redirect('/');
-    }
-
-    return true;
-}
-
-export default async function NewProjectPage() {
-    await checkAccess();
 
     return (
         <main className="container mx-auto px-4 py-8">

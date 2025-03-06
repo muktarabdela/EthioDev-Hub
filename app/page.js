@@ -65,7 +65,7 @@ async function getProjects() {
 
 export default async function Home() {
   const { data: { session } } = await supabase.auth.getSession();
-
+  console.log("session", session);
   try {
     // Redirect to login if not authenticated
     // if (!session) {
@@ -94,12 +94,12 @@ export default async function Home() {
             </p>
             <div className="flex justify-center gap-4">
               <Link href="/projects/new">
-                <Button size="lg">
+                <Button size="lg" className="bg-primary text-white hover:bg-primary-dark">
                   Post Your Project
                 </Button>
               </Link>
               <Link href="/projects">
-                <Button variant="outline" size="lg">
+                <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary-light">
                   Explore Projects
                 </Button>
               </Link>

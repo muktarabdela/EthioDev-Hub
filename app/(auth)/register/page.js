@@ -39,7 +39,7 @@ export default function RegisterPage() {
             }
 
             // Registration successful
-            router.push('/login?registered=true');
+            router.push('/l');
         } catch (err) {
             setError(err.message);
         } finally {
