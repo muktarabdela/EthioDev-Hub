@@ -95,55 +95,6 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* Community Stats Section */}
-        <section className="py-16 bg-primary/5">
-          <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              <div>
-                <h3 className="text-4xl font-bold text-primary mb-2">
-                  {projects.length}+
-                </h3>
-                <p className="text-muted-foreground">
-                  Projects Showcased
-                </p>
-              </div>
-              <div>
-                <h3 className="text-4xl font-bold text-primary mb-2">
-                  100+
-                </h3>
-                <p className="text-muted-foreground">
-                  Active Developers
-                </p>
-              </div>
-              <div>
-                <h3 className="text-4xl font-bold text-primary mb-2">
-                  50+
-                </h3>
-                <p className="text-muted-foreground">
-                  Companies Hiring
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-20">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Ready to Showcase Your Work?
-            </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Join our community of talented developers and get your work in front of
-              potential employers.
-            </p>
-            <Link href="/register">
-              <Button size="lg">
-                Get Started Now
-              </Button>
-            </Link>
-          </div>
-        </section>
       </main>
     </div>
   );
