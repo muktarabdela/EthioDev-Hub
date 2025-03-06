@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from '@/components/ui/Button';
 
 export function ProjectCard({ project }) {
+    console.log(project);
     const {
         id,
         title,

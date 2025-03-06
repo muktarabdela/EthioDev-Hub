@@ -3,24 +3,27 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { createClient } from '@/lib/supabase';
 import { useState, useEffect } from 'react';
+import { createClient } from '@/lib/auth';
 
 export function Navbar() {
     const pathname = usePathname();
+    const supabase = createClient();
+
     const [session, setSession] = useState(null);
     const [profile, setProfile] = useState(null);
 
     useEffect(() => {
         async function getSession() {
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data: { session } } = await supabase.auth?.getSession();
+            console.log(session);
             setSession(session);
 
             if (session) {
                 const { data: profile } = await supabase
                     .from('profiles')
                     .select('*')
-                    .eq('id', session.user.id)
+                    .eq('id', session?.user?.id)
                     .single();
                 setProfile(profile);
             }
