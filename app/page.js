@@ -1,8 +1,44 @@
 import { supabase, getSession } from '@/lib/supabase';
-import { ProjectCard } from '@/components/ProjectCard';
 import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
 import { Button } from '@/components/ui/Button';
+import { ProjectCard } from '@/components/ProjectCard';
+
+const dummyProjects = [
+
+  {
+    id: 1,
+    name: "NYX",
+    description: "Your AI-powered performance marketing co-pilot.",
+    tags: ["Marketing", "Advertising", "AI"],
+    comments: 27,
+    upvotes: 376,
+    iconBg: "bg-indigo-600",
+    iconText: "NYX",
+    contributors: 2
+  },
+  {
+    id: 2,
+    name: "Trupeer Faces",
+    description: "Studio-quality screen recording with avatars, completely AI",
+    tags: ["Chrome Extensions", "AI", "Video"],
+    comments: 13,
+    upvotes: 295,
+    iconImage: "https://placehold.co/32x32",
+    contributors: 5
+  },
+  {
+    id: 3,
+    name: "Perplexity Deep Research",
+    description: "Save hours of time in-depth research and analysis",
+    tags: ["AI", "Bots", "Search"],
+    comments: 9,
+    upvotes: 291,
+    iconBg: "bg-black",
+    iconSymbol: "data_object",
+    contributors: 1
+  }
+];
 
 async function getProjects() {
   try {
@@ -86,11 +122,36 @@ export default async function Home() {
                 </Button>
               </Link>
             </div>
+            <div className="flex flex-col lg:flex-row gap-6">
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
+              <div className="w-full lg:w-[70%]">
+                <div className="flex flex-col gap-6 md:gap-8">
+                  {dummyProjects.map((project, index) => (
+                    <ProjectCard
+                      key={project.name}
+                      project={project}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="w-full lg:w-[30%] space-y-6 md:space-y-8">
+                {/* Featured Developers Section */}
+                <div className="bg-white p-4 md:p-6 rounded-xl border">
+                  <h3 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">Featured Developers</h3>
+                  <div className="space-y-3 md:space-y-4">
+                    {[1, 2, 3].map((_, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <div className="w-8 h-8 md:w-10 md:h-10 bg-gray-100 rounded-full"></div>
+                        <div>
+                          <p className="text-sm md:text-base font-medium">Developer Name</p>
+                          <p className="text-xs md:text-sm text-gray-500">3 projects</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>
