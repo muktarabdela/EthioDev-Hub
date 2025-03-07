@@ -25,7 +25,7 @@ export default function ProfilePage() {
             if (session) {
                 getProfile();
             } else {
-                router.push('/login');
+                // router.push('/login');
             }
         });
 
@@ -34,12 +34,10 @@ export default function ProfilePage() {
     }, []);
 
     async function getProfile() {
-        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-        console.log("Session data:", session);
-        console.log("Session error:", sessionError);
+        const session = JSON.parse(localStorage.getItem('session'));
 
-        if (!session) {
-            console.log("No session found, redirecting to login");
+        if (!session?.user?.id) {
+            console.log("No valid session found, redirecting to login");
             router.push('/login');
             return;
         }
@@ -48,9 +46,9 @@ export default function ProfilePage() {
             .from('profiles')
             .select(`
                 *,
-                projects(
+                projects:projects!projects_developer_id_fkey(
                     *,
-                    developer:profiles(id, name, role)
+                    developer:profiles!projects_developer_id_fkey(id, name, role)
                 )
             `)
             .eq('id', session.user.id)
