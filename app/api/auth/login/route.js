@@ -24,8 +24,16 @@ export async function POST(request) {
             email,
             password,
         });
-
-        if (error) throw error;
+        console.log("error from login route", error)
+        if (error) {
+            if (error.status === 400 && error.code === 'invalid_credentials') {
+                return NextResponse.json(
+                    { error: 'Invalid email or password' },
+                    { status: 401 }
+                );
+            }
+            throw error;
+        }
 
         return NextResponse.json({
             message: 'Login successful',

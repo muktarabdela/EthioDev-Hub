@@ -4,6 +4,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -22,24 +23,27 @@ export default function LoginPage() {
         };
 
         try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
+            const response = await axios.post('/api/auth/login', data);
+            console.log('response', response);
 
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || 'Failed to login');
+            if (response.data?.session) {
+                // Login successful
+                router.push('/');
+            } else {
+                throw new Error('Login failed - no session created');
             }
-
-            // Login successful
-            router.push('/');
         } catch (err) {
-            setError(err.message);
+            // console.error('Error:', err);
+            if (err.response) {
+                // Handle API response errors
+                setError(err.response.data?.error || 'Invalid email or password');
+            } else if (err.request) {
+                // Handle network errors
+                setError('Network error - please check your connection');
+            } else {
+                // Handle other errors
+                setError(err.message || 'Login failed');
+            }
         } finally {
             setLoading(false);
         }
@@ -90,9 +94,9 @@ export default function LoginPage() {
                                 placeholder="••••••••"
                             />
                         </div>
-                        <Button 
-                            type="submit" 
-                            className="w-full"
+                        <Button
+                            type="submit"
+                            className="w-full bg-slate-700 hover:bg-primary/90 text-white"
                             disabled={loading}
                         >
                             {loading ? 'Signing in...' : 'Sign In'}
