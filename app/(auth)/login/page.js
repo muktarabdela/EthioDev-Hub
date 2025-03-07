@@ -27,6 +27,8 @@ export default function LoginPage() {
             console.log('response', response);
 
             if (response.data?.session) {
+                // store session in local storage
+                localStorage.setItem('session', JSON.stringify(response.data.session));
                 // Login successful
                 router.push('/');
             } else {

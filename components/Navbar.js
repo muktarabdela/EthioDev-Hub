@@ -15,7 +15,9 @@ export function Navbar() {
 
     useEffect(() => {
         async function getSession() {
-            const { data: { session } } = await supabase.auth?.getSession();
+            // Get the user's session from local storage
+            const session = localStorage.getItem('session');
+            // const { data: { session } } = await supabase.auth?.getSession();
             console.log(session);
             setSession(session);
 
