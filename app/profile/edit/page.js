@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import AvatarUpload from './AvatarUpload';
 
 async function getProfile() {
     const supabase = createClient();
@@ -42,6 +43,8 @@ export default async function EditProfilePage() {
                             <CardTitle>Basic Information</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
+                            <AvatarUpload userId={profile.id} avatarUrl={profile.avatar_url} />
+
                             <div>
                                 <label
                                     htmlFor="name"
@@ -126,6 +129,12 @@ export default async function EditProfilePage() {
                                     >
                                         Make my contact information visible to recruiters
                                     </label>
+                                </div>
+                                <div className="mt-2 text-sm text-muted-foreground">
+                                    <p>
+                                        When enabled, recruiters and hiring managers can contact you through the platform.
+                                        Your email will not be shared directly.
+                                    </p>
                                 </div>
                             </CardContent>
                         </Card>

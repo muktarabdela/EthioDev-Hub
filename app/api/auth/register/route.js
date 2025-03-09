@@ -30,34 +30,44 @@ export async function POST(request) {
 
         const supabase = createClient();
 
-        // Create the user in Supabase Auth
+        // First, create the user in Supabase Auth
         const { data: { user }, error: signUpError } = await supabase.auth.signUp({
             email,
             password,
         });
 
-        if (signUpError) throw signUpError;
+        if (signUpError) {
+            console.error('SignUp Error:', signUpError);
+            throw signUpError;
+        }
 
-        // Create the user profile
-        const { error: profileError } = await supabase
-            .from('profiles')
+        if (!user) {
+            throw new Error('No user returned from signUp');
+        }
+
+        // Then, create the user profile in the users table
+        const { error: userError } = await supabase
+            .from('users')
             .insert({
                 id: user.id,
-                name,
-                role,
+                username: name.toLowerCase().replace(/\s+/g, '_'), // Convert name to username format
+                bio: '', // Default empty bio
+                skills: [], // Default empty skills array
+                links: {} // Default empty links object
             });
 
-        if (profileError) {
-            // If profile creation fails, we should delete the auth user
+        if (userError) {
+            console.error('User Insert Error:', userError);
+            // If user creation fails, we should delete the auth user
             await supabase.auth.admin.deleteUser(user.id);
-            throw profileError;
+            throw userError;
         }
 
         return NextResponse.json({
             message: 'Registration successful. Please check your email for verification.',
         });
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Registration Error:', error);
         return NextResponse.json(
             { error: error.message || 'Failed to register user' },
             { status: 500 }

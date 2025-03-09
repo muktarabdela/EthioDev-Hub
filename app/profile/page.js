@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ProjectCard } from '@/components/ProjectCard';
+import SkillsManager from './SkillsManager';
 
 export default function ProfilePage() {
     const router = useRouter();
@@ -182,6 +183,11 @@ export default function ProfilePage() {
                         </dl>
                     </CardContent>
                 </Card>
+
+                {/* Skills Section - Only for developers */}
+                {profile.role === 'developer' && (
+                    <SkillsManager userId={profile.id} />
+                )}
 
                 {/* Projects Section */}
                 {profile.role === 'developer' && (

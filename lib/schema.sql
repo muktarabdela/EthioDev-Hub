@@ -7,6 +7,7 @@ create table public.profiles (
   github_url text,
   linkedin_url text,
   contact_visible boolean default false,
+  avatar_url text,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -54,6 +55,34 @@ create table public.upvotes (
 
 -- Enable RLS
 alter table public.upvotes enable row level security;
+
+-- Developer Skills table
+create table public.developer_skills (
+  id uuid default uuid_generate_v4() primary key,
+  developer_id uuid references public.profiles(id) on delete cascade not null,
+  skill text not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  unique (developer_id, skill)
+);
+
+-- Enable RLS
+alter table public.developer_skills enable row level security;
+
+-- Contact Requests table
+create table public.contact_requests (
+  id uuid default uuid_generate_v4() primary key,
+  developer_id uuid references public.profiles(id) on delete cascade not null,
+  user_id uuid references public.profiles(id) on delete set null,
+  name text not null,
+  email text not null,
+  company text,
+  message text not null,
+  is_read boolean default false,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Enable RLS
+alter table public.contact_requests enable row level security;
 
 -- RLS Policies
 
@@ -112,6 +141,36 @@ create policy "Authenticated users can upvote"
 create policy "Users can remove own upvotes"
   on public.upvotes for delete
   using (auth.uid() = user_id);
+
+-- Developer Skills policies
+create policy "Developer skills are viewable by everyone"
+  on public.developer_skills for select
+  using (true);
+
+create policy "Developers can manage their own skills"
+  on public.developer_skills for insert
+  with check (auth.uid() = developer_id);
+
+create policy "Developers can update their own skills"
+  on public.developer_skills for update
+  using (auth.uid() = developer_id);
+
+create policy "Developers can delete their own skills"
+  on public.developer_skills for delete
+  using (auth.uid() = developer_id);
+
+-- Contact Requests policies
+create policy "Developers can view contact requests sent to them"
+  on public.contact_requests for select
+  using (auth.uid() = developer_id);
+
+create policy "Anyone can create contact requests"
+  on public.contact_requests for insert
+  with check (true);
+
+create policy "Developers can update their own contact requests"
+  on public.contact_requests for update
+  using (auth.uid() = developer_id);
 
 -- Functions
 
